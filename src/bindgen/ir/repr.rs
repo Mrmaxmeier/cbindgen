@@ -4,6 +4,8 @@
 
 use syn;
 
+use bindgen::ir::documentation::attr_is_doc;
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ReprStyle {
     Rust,
@@ -55,7 +57,7 @@ impl Repr {
         let ids = attrs
             .iter()
             .filter_map(|attr| {
-                if attr.is_sugared_doc || attr.style != syn::AttrStyle::Outer {
+                if attr_is_doc(attr) || attr.style != syn::AttrStyle::Outer {
                     return None;
                 }
 

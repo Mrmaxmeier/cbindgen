@@ -20,12 +20,7 @@ impl Documentation {
 
         for attr in attrs {
             if attr.style == syn::AttrStyle::Outer {
-                // This requires a bit of explanation.  The syn intended way to
-                // deal with doc strings is to use the is_sugared_doc attribute.
-                // This however is not set when we go through the macro expansion
-                // step through rust.  In that case they are stored as doc
-                // attributes and the leading three slashes (and optional space)
-                // are not included.
+                // syn expands documentation comments into #[doc ...] attributes
                 if let Some(syn::Meta::NameValue(syn::MetaNameValue {
                     ident,
                     lit: syn::Lit::Str(comment),
@@ -36,14 +31,7 @@ impl Documentation {
                     let comment = comment.value();
 
                     if &*name == "doc" {
-                        let line = if attr.is_sugared_doc {
-                            comment
-                                .trim_left_matches("/// ")
-                                .trim_left_matches("///")
-                                .trim_right()
-                        } else {
-                            comment.trim_left_matches(" ").trim_right()
-                        };
+                        let line = comment.trim_left_matches(" ").trim_right();
                         if !line.starts_with("cbindgen:") {
                             doc.push(line.to_owned());
                         }
@@ -89,4 +77,12 @@ impl Source for Documentation {
             out.new_line();
         }
     }
+}
+
+pub(crate) fn attr_is_doc(attr: &syn::Attribute) -> bool {
+    let path = &attr.path;
+    path.leading_colon.is_none()
+        && path.segments.len() == 1
+        && path.segments[0].arguments.is_empty()
+        && path.segments[0].ident == "doc"
 }

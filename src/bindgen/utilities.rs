@@ -82,6 +82,8 @@ macro_rules! syn_item_match_helper {
             &syn::Item::Union(ref item) => (|$i: &syn::ItemUnion| $a)(item),
             &syn::Item::Use(ref item) => (|$i: &syn::ItemUse| $a)(item),
             &syn::Item::Verbatim(_) => (|| $b)(),
+            &syn::Item::Existential(_) => unimplemented!(),
+            &syn::Item::TraitAlias(_) => unimplemented!(),
         }
     };
 }

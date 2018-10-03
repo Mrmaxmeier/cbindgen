@@ -10,6 +10,8 @@ use syn;
 use bindgen::config::Config;
 use bindgen::writer::SourceWriter;
 
+use bindgen::ir::documentation::attr_is_doc;
+
 #[derive(PartialEq, Eq)]
 enum DefineKey<'a> {
     Boolean(&'a str),
@@ -108,7 +110,7 @@ impl Cfg {
         let mut configs = Vec::new();
 
         for attr in attrs {
-            if attr.is_sugared_doc {
+            if attr_is_doc(attr) {
                 continue;
             }
 

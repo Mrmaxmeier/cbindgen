@@ -11,6 +11,7 @@ use syn;
 
 use bindgen::cargo::{Cargo, PackageRef};
 use bindgen::error::Error;
+use bindgen::ir::documentation::attr_is_doc;
 use bindgen::ir::{AnnotationSet, Cfg, Constant, Documentation, Enum, Function, GenericParams};
 use bindgen::ir::{ItemMap, OpaqueItem, Static, Struct, Typedef, Union};
 use bindgen::utilities::{SynAbiHelpers, SynItemHelpers};
@@ -340,7 +341,7 @@ impl Parser {
                             // Last chance to find a module path
                             let mut path_attr_found = false;
                             for attr in &item.attrs {
-                                if attr.is_sugared_doc {
+                                if attr_is_doc(attr) {
                                     continue;
                                 }
 
